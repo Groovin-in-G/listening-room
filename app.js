@@ -38,7 +38,9 @@ const S = {
   detailsOpen: false, details: [], detailsFor: null, editDetails: false, detLink: {}, invLink: {}, pinv: {}, pinvFor: '', pinvOwner: false, shown: {}, artMeta: {}, detIndex: [],
 };
 const joinUrl = tok => `${PUBLIC_URL}?join=${tok}`;
-const linkUrl = tok => `${PUBLIC_URL}?details=${tok}`;
+// An 8-character code is the short address link (step 14, served by 404.html); anything longer is the old token link.
+const linkUrl = tok => tok.length === 8 ? `${PUBLIC_URL}address/${tok}` : `${PUBLIC_URL}?details=${tok}`;
+const ADDRESS_CODE = location.pathname.match(/\/address\/([a-z0-9]{8})\/?$/i)?.[1];
 // Details are per artist: one answer covers every track that artist has on the release.
 const artistKey = t => (t?.artist || t?.title || '').trim().toLowerCase();
 const detailsIn = t => S.details.concat(S.detIndex).some(d => { const dt = S.tracks.find(x => x.id === d.track_id); return dt && dt.release_id === t.release_id && artistKey(dt) === artistKey(t); });
@@ -51,6 +53,7 @@ async function boot() {
   try { S.api = DEMO ? demoApi(q.get('demo') === 'guest' ? 'guest' : 'member') : await supabaseApi(); }
   catch (e) { return fatal('Could not reach the server. Check your connection and reload.'); }
   if (q.get('details')) return linkFormView(q.get('details'));
+  if (ADDRESS_CODE) return linkFormView(await S.api.resolveDetails(ADDRESS_CODE) || 'closed');
   if (q.get('join')) return joinView(q.get('join'));
   S.api.onAuth(s => { if (!s && S.me) { S.me = null; clearCache(); stopAll(); signInView(); } });
   paintFromCache();

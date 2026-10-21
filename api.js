@@ -136,7 +136,12 @@ export async function supabaseApi() {
       return ok(await sb.from('lr_details').upsert({ ...row, release_id: rel, user_id: user.id, updated_at: new Date().toISOString() }, { onConflict: 'release_id,user_id' }).select().single());
     },
     // The details link: artists fill in the form with no account (setup/06-details-link.sql).
-    async detailsLink(rel, renew = false) { return ok(await sb.rpc('lr_details_link', { rel, renew })); },
+    // The short code (step 14) when the database has it, else the long token, so the room works either side of step 14.
+    async detailsLink(rel, renew = false) {
+      const tok = ok(await sb.rpc('lr_details_link', { rel, renew }));
+      const c = await sb.rpc('lr_details_code', { rel }); return c.error || !c.data ? tok : c.data;
+    },
+    async resolveDetails(code) { const r = await sb.rpc('lr_details_resolve', { code }); return r.error ? null : r.data; },
     async detailsForm(tok) { return ok(await sb.rpc('lr_details_form', { tok })); },
     async submitDetails(tok, r) { return ok(await sb.rpc('lr_submit_details', { tok, full_name: r.full_name, email: r.email, address: r.address, country: r.country || '', note: r.note || '', track: r.track || null })); },
   };
@@ -239,7 +244,8 @@ export function demoApi(kind = 'member') {
     async addGuest(rel, email) { if (!/@/.test(email)) return 'no-account'; const u = 'u-' + email; names[u] = email.split('@')[0]; (guests[rel] = guests[rel] || []).push(u); return wait('added'); },
     async removeGuest(rel, uid) { guests[rel] = (guests[rel] || []).filter(x => x !== uid); return wait(); },
     async details(rel) { return wait(details.filter(d => d.release_id === rel && (me.kind === 'member' || d.user_id === me.id)).map(d => ({ ...d }))); },
-    async detailsLink(rel, renew) { return wait(renew || !links[rel] ? (links[rel] = 'demo' + Math.random().toString(16).slice(2).padEnd(32, '0')) : links[rel]); },
+    async detailsLink(rel, renew) { return wait(renew || !links[rel] ? (links[rel] = Array.from({ length: 8 }, () => 'abcdefghjkmnpqrstuvwxyz23456789'[Math.random() * 31 | 0]).join('')) : links[rel]); },
+    async resolveDetails(code) { return wait('demo'); },
     async detailsForm(tok) { return wait(Object.values(links).includes(tok) || tok === 'demo' ? { name: 'Event Horizons', art: 'demo-art', tracks: tracks.filter(t => t.release_id === 'r-ep').map(t => ({ id: t.id, artist: t.artist, title: t.title })) } : null); },
     async submitDetails(tok, r) { details.push({ ...r, track_id: r.track || null, id: 'd' + Date.now(), release_id: 'r-eh1', user_id: null, via_link: true, updated_at: new Date().toISOString() }); return wait(true); },
     async detailsIndex() { return wait(details.filter(d => d.track_id).map(d => ({ release_id: d.release_id, track_id: d.track_id }))); },
