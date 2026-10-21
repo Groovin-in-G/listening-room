@@ -1,7 +1,7 @@
 // The data layer. Two backends with one shape:
 //   supabaseApi() — the real one: auth, tables, private storage (signed URLs only).
 //   demoApi(kind) — in memory, generated audio; drives every screen without a login (?demo, ?demo=guest).
-import { SUPABASE_URL, SUPABASE_ANON_KEY, BUCKET } from './config.js';
+import { SUPABASE_URL, SUPABASE_ANON_KEY, BUCKET, PUBLIC_URL } from './config.js?v=1792582672';
 
 const ext = n => (n.match(/\.[a-z0-9]+$/i) || [''])[0].toLowerCase();
 const safe = n => n.replace(/[^\w.\- ]+/g, '_').slice(0, 120);
@@ -51,7 +51,7 @@ export async function supabaseApi() {
     async session() { return (await sb.auth.getSession()).data.session; },
     onAuth(cb) { sb.auth.onAuthStateChange((_e, s) => cb(s)); },
     async signIn(email, password) { ok(await sb.auth.signInWithPassword({ email, password })); },
-    async sendLink(email) { ok(await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: location.origin + location.pathname } })); },
+    async sendLink(email) { ok(await sb.auth.signInWithOtp({ email, options: { shouldCreateUser: false, emailRedirectTo: PUBLIC_URL } })); },
     async setPassword(password) { ok(await sb.auth.updateUser({ password })); },
     async setEmail(email) { ok(await sb.auth.updateUser({ email })); },   // Supabase emails a confirm link to the new address
     async signOut() { await sb.auth.signOut(); },

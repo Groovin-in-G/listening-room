@@ -1,5 +1,6 @@
 // The Listening Room. One page: sign in, then the room (members) or the releases you were given (guests).
-import { supabaseApi, demoApi } from './api.js?v=1792405357';
+import { supabaseApi, demoApi } from './api.js?v=1792582672';
+import { PUBLIC_URL } from './config.js?v=1792582672';
 
 const q = new URLSearchParams(location.search);
 const DEMO = q.has('demo');
@@ -36,8 +37,8 @@ const S = {
   peopleOpen: false, people: [], art: {}, confirmTrack: null, setPw: false, account: false, setMail: false,
   detailsOpen: false, details: [], detailsFor: null, editDetails: false, detLink: {}, invLink: {}, pinv: {}, pinvFor: '', pinvOwner: false, shown: {}, artMeta: {}, detIndex: [],
 };
-const joinUrl = tok => `${location.origin}${location.pathname}?join=${tok}`;
-const linkUrl = tok => `${location.origin}${location.pathname}?details=${tok}`;
+const joinUrl = tok => `${PUBLIC_URL}?join=${tok}`;
+const linkUrl = tok => `${PUBLIC_URL}?details=${tok}`;
 // Details are per artist: one answer covers every track that artist has on the release.
 const artistKey = t => (t?.artist || t?.title || '').trim().toLowerCase();
 const detailsIn = t => S.details.concat(S.detIndex).some(d => { const dt = S.tracks.find(x => x.id === d.track_id); return dt && dt.release_id === t.release_id && artistKey(dt) === artistKey(t); });
