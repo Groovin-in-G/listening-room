@@ -166,7 +166,9 @@ img.relart.big{width:auto;max-width:140px;object-fit:contain}
 .pinvwait{color:var(--dim)}
 @media (max-width:640px){.pinv.done{grid-template-columns:minmax(0,1fr);gap:2px}.pinv.done>span:last-child{display:none}}
 /* George 2026-10-21: the scrollbar's track was white; it matches the page now. */
-:root{color-scheme:dark}html{background:#070d18;scrollbar-color:#24334f #070d18}
+/* George 2026-10-21: the page nudged sideways moving between All demos and a release. A long list grows a 12px
+   scrollbar, the centred page re-centres 6px. Keep the (page-coloured) scrollbar track always, so nothing moves. */
+:root{color-scheme:dark}html{background:#070d18;scrollbar-color:#24334f #070d18;overflow-y:scroll}
 ::-webkit-scrollbar{width:12px;height:12px}::-webkit-scrollbar-track{background:#070d18}
 ::-webkit-scrollbar-thumb{background:#1d2a40;border-radius:8px;border:3px solid #070d18}::-webkit-scrollbar-thumb:hover{background:#2c3d5c}
 /* George 2026-10-21: top row = artwork left, title centred, your name right. On a release the artwork is its cover. */
@@ -258,3 +260,6 @@ img.av.badge{background:none;border:0;border-radius:0;object-fit:contain;filter:
 .ilinks{display:grid;gap:6px;margin-top:10px}
 .ilink{display:flex;align-items:center;gap:4px}.ilink .role{font-size:12px;padding:3px 10px;margin-right:4px}.ilink .role img{width:14px;height:14px}
 .cpy.x{font-size:16px;line-height:1;width:22px;height:22px}.cpy.x:hover{color:#ff8a7a}
+/* George 2026-10-21, the nudge: a tagged row (Details in, YouTube) stood 2px taller than its neighbours. The tags now
+   overhang the artist line by a hair instead of stretching it, so every row is the same height. */
+.dtag,.srctag{margin-top:-2px;margin-bottom:-2px}

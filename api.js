@@ -1,7 +1,7 @@
 // The data layer. Two backends with one shape:
 //   supabaseApi() — the real one: auth, tables, private storage (signed URLs only).
 //   demoApi(kind) — in memory, generated audio; drives every screen without a login (?demo, ?demo=guest).
-import { SUPABASE_URL, SUPABASE_ANON_KEY, BUCKET, PUBLIC_URL } from './config.js?v=1792586033';
+import { SUPABASE_URL, SUPABASE_ANON_KEY, BUCKET, PUBLIC_URL } from './config.js?v=1792594060';
 
 const ext = n => (n.match(/\.[a-z0-9]+$/i) || [''])[0].toLowerCase();
 const safe = n => n.replace(/[^\w.\- ]+/g, '_').slice(0, 120);

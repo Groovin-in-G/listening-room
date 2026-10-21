@@ -19,4 +19,12 @@ export async function drive(name, L) {
   if (name === 'ownerinv') { document.querySelector('#ppl').click(); await wait(800); document.querySelector('#invmem').click(); await wait(400); document.querySelector('#invown').click(); }
   if (name === 'addresses') { document.querySelector('#dets').click(); }
   if (name === 'newrel') { document.querySelector('#newrel').click(); }
+  if (name === 'rects') {   // layout-shift check: prints where the fixed furniture sits on this page
+    await wait(800);
+    const r = sel => { const e = document.querySelector(sel); if (!e) return `${sel}: none`; const b = e.getBoundingClientRect(); return `${sel}: x${b.left.toFixed(1)} y${b.top.toFixed(1)} w${b.width.toFixed(1)} h${b.height.toFixed(1)}`; };
+    const d = document.createElement('pre');
+    d.style.cssText = 'position:fixed;left:8px;bottom:8px;z-index:99;background:#000;color:#0f0;font:13px monospace;padding:8px;margin:0';
+    d.textContent = ['.top', '#topart', 'h1', '.mbar', '.side'].map(r).join('\n') + '\nrows: ' + [...document.querySelectorAll('.trk')].map(t => t.querySelector('.t')?.textContent.slice(0, 10) + '=' + t.getBoundingClientRect().height.toFixed(0)).join('  ');
+    document.body.appendChild(d);
+  }
 }
