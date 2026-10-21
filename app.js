@@ -1,6 +1,6 @@
 // The Listening Room. One page: sign in, then the room (members) or the releases you were given (guests).
-import { supabaseApi, demoApi } from './api.js?v=1792582672';
-import { PUBLIC_URL } from './config.js?v=1792582672';
+import { supabaseApi, demoApi } from './api.js?v=1792583080';
+import { PUBLIC_URL } from './config.js?v=1792583080';
 
 const q = new URLSearchParams(location.search);
 const DEMO = q.has('demo');
